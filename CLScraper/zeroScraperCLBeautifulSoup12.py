@@ -136,10 +136,10 @@ while True:
         for item in results:
 
             
-            butt = item.find_all("span", {"class": "maptag"})
+            findings = item.find_all("span", {"class": "maptag"})
             
-            for poo in butt:
-                dist = decodeMaptag(poo.encode_contents())
+            for el in findings:
+                dist = decodeMaptag(el.encode_contents())
                 if float(dist) >= float(search.get("radius")):
                     flag = True
                     
@@ -160,23 +160,23 @@ while True:
                     end += 1
                 res.idNum = strResult[start:end]
                 
-                butt = item.find_all("a", {"class": "result-image gallery"})
-                if(len(butt) == 0):
-                    butt = item.find_all("a", {"class": "result-image gallery empty"})
-                for poo in butt:
-                    res.link = poo.get('href')
+                findings = item.find_all("a", {"class": "result-image gallery"})
+                if(len(findings) == 0):
+                    findings = item.find_all("a", {"class": "result-image gallery empty"})
+                for el in findings:
+                    res.link = el.get('href')
 
-                butt = item.find_all("a", {"class": "result-title hdrlnk"})
-                for poo in butt:
-                    res.title = simpleDecode(poo.encode_contents())
+                findings = item.find_all("a", {"class": "result-title hdrlnk"})
+                for el in findings:
+                    res.title = simpleDecode(el.encode_contents())
 
-                butt = item.find_all("span", {"class": "result-price"})
-                for poo in butt:
-                    res.price = simpleDecode(poo.encode_contents())
+                findings = item.find_all("span", {"class": "result-price"})
+                for el in findings:
+                    res.price = simpleDecode(el.encode_contents())
 
-                butt = item.find_all("time", {"class": "result-date"})
-                for poo in butt:
-                    res.date = simpleDecode(poo.encode_contents())
+                findings = item.find_all("time", {"class": "result-date"})
+                for el in findings:
+                    res.date = simpleDecode(el.encode_contents())
                 
                 finalResultList.append(res)
 
@@ -238,16 +238,17 @@ while True:
 
         for res in finalResultList:
             marker = "*"
-            lightLED = False
+            lightLED = True
             for ident in idList:
                 if res.idNum in ident:
-                    if ident[0] == "*": #found it in file, and it has an ast
-                        lightLED = True
-                    else: #found it, and has no ast
-                        marker = ""    
+                    if ident[0] != "*":
+                       #print("found it, and has no ast")
+                        marker = ""
+                        lightLED = False
+                   #else found it and it has an asterisk 
                     break
-                else: #didnt find it, so itll get an ast
-                   lightLED = True
+                #else: #didnt find it
+        
                    
             outputList.append(marker + res.idNum + "\n")
 
@@ -256,7 +257,7 @@ while True:
          
         ids.close()
 
-        nextCheck = round(time.time()) + 120
+        nextCheck = round(time.time()) + 60
         nextBlink = round(time.time()) #if we're going to need to start blinking, this gives us a consistent result
     ###end of timer controlled check block
 
