@@ -1,5 +1,8 @@
 #!/usr/local/lib/python3
 
+
+#v13
+
 # currently on craigslist, hits look like this
 #      <li class result-row>
 #   <a link>        <div class result-info>
@@ -7,9 +10,7 @@
 #                                                                 <span class result-price><span class result-tags>
 #                                                                                           <span class maptag>
 
-#V12
-
-#checks craigslist every 5 minutes using given search settings.  Maintains a list
+#checks craigslist every few minutes using given search settings.  Maintains a list
 #of ID numbers and checks to see if anything new is on it.  If a new id number shows
 #up, it turns on an LED so I know to check the page it hosts on the local server
 # which lists the current hits and a link to the search on cl.
@@ -20,6 +21,8 @@ import requests
 import time
 from bs4 import BeautifulSoup
 import RPi.GPIO as GPIO
+import os #for being able to use relative filepaths
+
 
 class Search:
     def __init__(self,region,cat,sort,strict):
@@ -83,6 +86,10 @@ def simpleDecode(data): #bs returns some things in format b'xxxx'
     decoded = "" + str(data)
     return decoded[2:-1] 
 
+#this is needed if running the script from the terminal, cause otherwise it cant find the relative paths
+mainDir = os.path.dirname(__file__)
+hitInfoPath = os.path.join(mainDir,'hitInfoList.txt')
+IDListPath = os.path.join(mainDir,'IDList.txt')
 
 #planer search (ny area, tool category, sort by date, strictness) strict means we toss out hits that dont have the search term in the title
 search = Search("newyork","tla","date",True)                          # which are often somebody mentioning other tools they have in the post description
@@ -206,7 +213,7 @@ while True:
         print()
 
         #write the details to a file
-        info = open('hitInfoList.txt','w')
+        info = open(hitInfoPath,'w')
         
         for res in finalResultList: 
             print(res.title)
@@ -228,30 +235,37 @@ while True:
             
         #now deal with the id numbers file so we know if somethings new or not.
         #todo check for file existence
-        ids = open('IDList.txt','r')
+        ids = open(IDListPath ,'r')
         idList = ids.readlines()
-        ids.close()
-        #print("idlist is " + str(idList))
         
-        ids = open('IDList.txt','w')
+        ids.close()
+        
+        ids = open(IDListPath ,'w')
+
+        for item in idList:
+            print(item)
 
         outputList = []
         index = 0
 
+        lightLED = False
+        
         for res in finalResultList:
             marker = "*"
-            lightLED = True
+            flag = 0
             for ident in idList:
                 if res.idNum in ident:
-                    if ident[0] != "*":
-                       #print("found it, and has no ast")
+                    if ident[0] != "*": #found, no asterisk
+                        flag = 1
                         marker = ""
-                        lightLED = False
-                   #else found it and it has an asterisk 
+                    else: # found and already has asterisk
+                        flag = 1
+                        lightLED = True
                     break
-                #else: #didnt find it
-        
-                   
+
+            if flag == 0:
+                lightLED = True
+                
             outputList.append(marker + res.idNum + "\n")
 
         for item in outputList:
