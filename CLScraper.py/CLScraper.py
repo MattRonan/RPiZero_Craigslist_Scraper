@@ -7,6 +7,8 @@
 #                                                                 <span class result-price><span class result-tags>
 #                                                                                           <span class maptag>
 
+#V12
+
 #checks craigslist every 5 minutes using given search settings.  Maintains a list
 #of ID numbers and checks to see if anything new is on it.  If a new id number shows
 #up, it turns on an LED so I know to check the page it hosts on the local server
