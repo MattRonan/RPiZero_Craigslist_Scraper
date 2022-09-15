@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=theScrape
+Exec=xterm -hold -e 'python3 /var/www/html/pages/CLScraper/CLScraper.py'
+Terminal=true
+X-KeepTerminal=true
+StartupNotify=true
