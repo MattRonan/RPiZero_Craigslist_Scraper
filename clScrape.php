@@ -57,7 +57,6 @@ ini_set('display_errors', TRUE);
 				for($i = 0; $i < $numHits; $i++){
 					if(strcmp(substr($idList[$i],0,1),"*") == 0){ //need to remove *
 						fwrite($myfile,substr($idList[$i],1,strlen($idList[$i])-1));
-						//echo substr($idList[$i],1,strlen($idList[$i])-1) . "<br>";
 					}
 					else{
 						fwrite($myfile,$idList[$i]);
@@ -68,9 +67,6 @@ ini_set('display_errors', TRUE);
 				echo "<meta http-equiv='refresh' content='0'>"; #refreshes page after click to repopulate with no new items
 			}
 			
-			if(isset($_POST['button2'])) {
-				echo "poptart";
-			}
 		?>
 
 		<div id = "headerDiv">
