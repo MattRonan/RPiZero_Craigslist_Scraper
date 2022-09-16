@@ -1,9 +1,9 @@
 <?php
-error_reporting(E_ALL); // Error/Exception engine, always use E_ALL
+	header("refresh: 180;");
+error_reporting(E_ALL);    
+ini_set('ignore_repeated_errors', TRUE); 
 
-ini_set('ignore_repeated_errors', TRUE); // always use TRUE
-
-ini_set('display_errors', TRUE); // Error/Exception display, use FALSE only in production environment or real server. Use TRUE in development environment
+ini_set('display_errors', TRUE); 
 ?>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -21,37 +21,56 @@ ini_set('display_errors', TRUE); // Error/Exception display, use FALSE only in p
 	<body>
 
 		<?php
+			
+			//open up and store the id list so we know the number of hits and what's new.
+			$myfile = fopen('CLScraper/IDList.txt', 'r+') or die("Unable to open file!");
+			
+			$numHits = 0;
+			$idList = array();
+			while(!feof($myfile)) {
+				$numHits += 1;
+				array_push($idList,fgets($myfile));
+			}
+			
+			$numHits -= 1; #!feof($myfile) seems to cause numHits to be one greater than actual number...will check later
+			
+			fclose($myfile);
+			
+			//now open up and store the info list.  First line is the url to the search.
+			$myfile = fopen('CLScraper/hitInfoList.txt', 'r') or die("Unable to open file!");
+			$infoList = array();
+			$groupSize = 5; //how many lines are in each hit group. rn its title,radius,price,date,link
+			$searchURL = fgets($myfile);
+			$lineOffset = 1; //might eventually include the itemized search terms in the header of the info list too. for now its just the url.
+			for($i = 0; $i < $numHits; $i++){
+				for($ii = 0; $ii < $groupSize; $ii++){
+					array_push($infoList,fgets($myfile));
+				}
+			}
+			fclose($myfile);
+
 			if(isset($_POST['button1'])) {
 				
 				//here we open the idlist file and overwreite it so that nothing has an asterisk
 				//all we have to do is check for * at the beginning of each item in $idList and subr if needed
 				$myfile = fopen('CLScraper/IDList.txt', 'w') or die("Unable to open file!");
-				for($i = 0; $i < $lines; $i++){
+				for($i = 0; $i < $numHits; $i++){
 					if(strcmp(substr($idList[$i],0,1),"*") == 0){ //need to remove *
-						substr($idList[0],1,strlen($idList[0])-2)
+						fwrite($myfile,substr($idList[$i],1,strlen($idList[$i])-1));
+						//echo substr($idList[$i],1,strlen($idList[$i])-1) . "<br>";
 					}
 					else{
-						
+						fwrite($myfile,$idList[$i]);
 					}
 				}
-				
-				
+				fclose($myfile);
 				
 				echo "<meta http-equiv='refresh' content='0'>"; #refreshes page after click to repopulate with no new items
 			}
-		?>
-		
-		<?php
 			
-			$myfile = fopen('CLScraper/IDList.txt', 'r+') or die("Unable to open file!");
-			
-			$lines = 0;
-			$idList = array();
-			while(!feof($myfile)) {
-				$lines += 1;
-				array_push($idList,fgets($myfile));
+			if(isset($_POST['button2'])) {
+				echo "poptart";
 			}
-			fclose($myfile);
 		?>
 
 		<div id = "headerDiv">
@@ -65,21 +84,25 @@ ini_set('display_errors', TRUE); // Error/Exception display, use FALSE only in p
 
 	  </div>
 
-		<h3>Current Search: </h3>
-
+		<a id="mainLink" style = "display:inline-block" href="<?php echo $searchURL?>" target="_blank">See Results On Craigslist </a>
+		<br>
 		<div id = "resultsDiv">
 			<?php
 				//generate divs
-				for($i = 0; $i < $lines; $i++){
+				$vis;
+				for($i = 0; $i < $numHits; $i++){
 					if(strcmp(substr($idList[$i],0,1),"*") == 0){ //unseen
-						echo "<div class = 'hitDivUnseen'>" . $idList[$i] . "</div>";
+						$vis = 'hitDivUnseen';
 					}
 					else{
-						echo "<div class = 'hitDivSeen'>" . $idList[$i] . "</div>";
+						$vis = 'hitDivSeen';
 					}
-				}
+						echo "<div class = " . $vis . "> <a class = 'titles' href = '" . $infoList[($i*$groupSize)+4] . "'>" .
+								 $infoList[($i*$groupSize)+0] . $i . "," . $numHits ."</a>
+								<br> <h4>" . $infoList[($i*$groupSize)+2] . "</h4> " . $infoList[($i*$groupSize)+1] . ", " . $infoList[($i*$groupSize)+3] .
+						"</div>";
 				
-				//subtr($idList[0],1,strlen($idList[0])-2) remove asteerisk
+				}
 			?>
 		</div>
 
