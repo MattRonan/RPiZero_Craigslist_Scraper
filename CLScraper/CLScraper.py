@@ -1,7 +1,7 @@
 #!/usr/local/lib/python3
 
 
-#v14
+#v15
 
 # currently on craigslist, hits look like this
 #      <li class result-row>
@@ -108,6 +108,7 @@ nextCheck = round(time.time())
 lightLED = False
 nextBlink = round(time.time())
 blinkState = 0
+nextResetCheck = 0; #check the IDList periodically so we catch when LED's been reset
 
 GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BCM)
@@ -279,6 +280,17 @@ while True:
         nextBlink = round(time.time()) #if we're going to need to start blinking, this gives us a consistent result
     ###end of timer controlled check block
 
+    #peridocally check the ID txt file to see if the results have been marked as seen on the webpage
+    if round(time.time()) >= nextResetCheck:
+        lightLED = False
+        ids = open(IDListPath ,'r')
+        idList = ids.readlines()       
+        ids.close()
+        for item in idList:
+            if item[0] == "*":
+                lightLED = True
+        nextResetCheck = round(time.time()) + 10
+        
     # Blink an LED when there's new hits.  Only way to stop it is to
     # go to the page served by this rpi and click the reset button
     if lightLED:
