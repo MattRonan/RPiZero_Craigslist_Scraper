@@ -98,7 +98,7 @@ ini_set('display_errors', TRUE);
 						$vis = 'hitDivSeen';
 					}
 						echo "<div class = " . $vis . "> <a class = 'titles' href = '" . $infoList[($i*$groupSize)+4] . "'>" .
-								 $infoList[($i*$groupSize)+0] . $i . "," . $numHits ."</a>
+								 $infoList[($i*$groupSize)+0] . "</a>
 								<br> <h4>" . $infoList[($i*$groupSize)+2] . "</h4> " . $infoList[($i*$groupSize)+1] . ", " . $infoList[($i*$groupSize)+3] .
 						"</div>";
 				
