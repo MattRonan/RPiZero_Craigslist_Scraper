@@ -7,7 +7,7 @@ You may have to wait weeks or months for the right post to show up, checking dai
   This scraper system uses a Raspberry Pi Zero to run a search every few minutes using Requests and breaks down the results with Beautiful Soup.
 It maintains some log files so it knows when a new hit has appeared and blinks a nice red LED to get your attention.  The RPi uses an Apache server to post to a page, viewable via the local network, where it shows the current search hits with the new hits highlighted in red.  You can then check them out and click a button to mark them as seen so it'll stop blinking. 
 
-RPi's page lists the hits found.  Button lets you reset the LED once you've checked them out:
+RPi's page accessible from any browser:
 
 ![WebsiteAndLED](https://user-images.githubusercontent.com/11184076/190838582-4b59c5e5-288a-4d0a-a981-38dd669ecaf3.gif)
 
