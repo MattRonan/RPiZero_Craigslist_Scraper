@@ -1,5 +1,6 @@
 # RPiZero_Craigslist_Scraper
 
+Searching for a planer in Brooklyn:
 ![script](https://user-images.githubusercontent.com/11184076/190838393-18e975b5-6399-4f0c-b5b9-ee661e0e7636.gif)
 
   Lets say you're looking on Craigslist for a slightly obscure tool, a specific car, etc.
